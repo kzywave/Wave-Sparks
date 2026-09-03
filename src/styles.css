@@ -14,18 +14,36 @@
   --border: #dfe1e5;
   --grid: rgba(35, 38, 43, 0.05);
   --shadow: 0 22px 60px rgba(24, 27, 33, 0.12);
+  --primary-border: #5058d6;
+  --primary-hover: #7c83ff;
+  --brand-mark-bg: #858bff;
+  --brand-mark-border: #646cff;
+  --active-border: #c7caff;
+  --active-bg: #f0f1ff;
+  --active-label: #3f47bb;
+  --highlight-bg: #eef0ff;
+  --focus-ring: rgba(100, 108, 255, 0.45);
 }
 
 :root[data-theme='yellow'] {
   --accent-ink: #171306;
-  --canvas: #ffe512;
-  --surface: #fffdf2;
-  --surface-soft: #fff7c8;
-  --ink: #171306;
-  --muted: #6f6540;
-  --border: #e5c934;
-  --grid: rgba(82, 65, 0, 0.08);
-  --shadow: 0 22px 60px rgba(82, 65, 0, 0.18);
+  --canvas: #f5f6f8;
+  --surface: #ffffff;
+  --surface-soft: #f4f5f6;
+  --ink: #17181a;
+  --muted: #6d737b;
+  --border: #e0e2e5;
+  --grid: rgba(53, 61, 72, 0.055);
+  --shadow: 0 22px 60px rgba(24, 27, 33, 0.12);
+  --primary-border: #e4b800;
+  --primary-hover: #ffd633;
+  --brand-mark-bg: #ffdb3d;
+  --brand-mark-border: #e5b900;
+  --active-border: #ecd17a;
+  --active-bg: #fff8da;
+  --active-label: #9a7800;
+  --highlight-bg: #fff6cd;
+  --focus-ring: rgba(228, 184, 0, 0.45);
 }
 
 * { box-sizing: border-box; }
@@ -77,14 +95,15 @@ p { color: var(--muted); line-height: 1.55; }
 }
 
 .button--primary {
-  border-color: color-mix(in srgb, var(--accent), #000 12%);
+  border-color: var(--primary-border);
   color: var(--accent-ink);
   background: var(--accent);
 }
+.button--primary:hover { background: var(--primary-hover); }
 
 .button:disabled { cursor: not-allowed; opacity: .38; }
 .button:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--accent), transparent 55%);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -95,10 +114,10 @@ p { color: var(--muted); line-height: 1.55; }
   height: 2.35rem;
   flex: 0 0 auto;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--accent), #000 12%);
+  border: 1px solid var(--brand-mark-border);
   border-radius: .72rem;
   color: var(--accent-ink);
-  background: var(--accent);
+  background: var(--brand-mark-bg);
   font-weight: 800;
 }
 .brand strong, .brand span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -148,7 +167,7 @@ p { color: var(--muted); line-height: 1.55; }
   gap: 1rem;
   padding: .9rem clamp(1rem, 3vw, 2.3rem);
   border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--surface), transparent 4%);
+  background: var(--surface);
 }
 .shell-header__actions { display: flex; align-items: center; gap: .5rem; }
 .segmented-control { display: flex; padding: .2rem; border: 1px solid var(--border); border-radius: .8rem; background: var(--surface-soft); }
@@ -174,12 +193,13 @@ p { color: var(--muted); line-height: 1.55; }
   cursor: pointer;
 }
 .stage-button span, .showcase-slides span { color: var(--muted); font-size: .68rem; }
-.stage-button[aria-current], .showcase-slides button[aria-current] { border-color: color-mix(in srgb, var(--accent), transparent 45%); background: color-mix(in srgb, var(--accent), transparent 90%); }
+.stage-button[aria-current], .showcase-slides button[aria-current] { border-color: var(--active-border); background: var(--active-bg); }
+.stage-button[aria-current] strong, .showcase-slides button[aria-current] strong { color: var(--active-label); }
 .panel dl { margin: 2rem 0; }
 .panel dl div { padding: 1rem 0; border-top: 1px solid var(--border); }
 .panel dt { color: var(--muted); font-size: .68rem; text-transform: uppercase; }
 .panel dd { margin: .4rem 0 0; font-size: .83rem; line-height: 1.45; }
-.callout { padding: 1rem; border: 1px solid var(--border); border-radius: .75rem; color: var(--muted); background: var(--surface-soft); font-size: .8rem; line-height: 1.55; }
+.callout { padding: 1rem; border: 1px solid var(--border); border-radius: .75rem; color: var(--muted); background: var(--highlight-bg); font-size: .8rem; line-height: 1.55; }
 .pager { display: flex; gap: .55rem; margin-top: 1.25rem; }
 .pager .button { flex: 1; }
 

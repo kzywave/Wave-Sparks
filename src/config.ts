@@ -28,8 +28,8 @@ export const DEFAULT_SHELL_CONFIG: ShellConfig = {
     subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   },
   theme: {
-    preset: 'neutral',
-    accent: THEME_DEFAULT_ACCENTS.neutral,
+    preset: 'yellow',
+    accent: THEME_DEFAULT_ACCENTS.yellow,
   },
   device: {
     width: 393,

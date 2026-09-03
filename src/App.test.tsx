@@ -32,6 +32,16 @@ describe('prototype starter', () => {
     expect(window.localStorage.getItem(ACCESS_STORAGE_KEY)).toBe('granted')
   })
 
+  it('starts with the checked-in yellow desktop snapshot', async () => {
+    grantAccess()
+    renderApp('/config')
+
+    await screen.findByRole('heading', { name: 'Configure this prototype' })
+    expect(document.documentElement).toHaveAttribute('data-theme', 'yellow')
+    expect(document.documentElement.style.getPropertyValue('--accent')).toBe('#ffcb05')
+    expect(screen.getByRole('combobox', { name: 'Preset' })).toHaveValue('yellow')
+  })
+
   it('rejects an incorrect access code', async () => {
     const user = userEvent.setup()
     renderApp('/access')
@@ -93,6 +103,8 @@ describe('prototype starter', () => {
     await user.click(screen.getByRole('button', { name: 'Reset defaults' }))
     expect(screen.getAllByText('Prototype Starter').length).toBeGreaterThan(0)
     expect(window.localStorage.getItem(CONFIG_STORAGE_KEY)).toBeNull()
+    expect(document.documentElement).toHaveAttribute('data-theme', 'yellow')
+    expect(document.documentElement.style.getPropertyValue('--accent')).toBe('#ffcb05')
   })
 
   it('updates theme, accent, and device dimensions from config', async () => {

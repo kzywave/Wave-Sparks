@@ -38,7 +38,7 @@ All example screens are intentionally grey and display their configured logical 
 
 Open `/config` after entering the access code. Changes are saved in the current browser for live preview. Use **Copy config**, then replace `DEFAULT_SHELL_CONFIG` in `src/config.ts` with the copied object to make it the checked-in default.
 
-The starter includes `neutral` and `yellow` themes. Add future presets with CSS custom properties under a new `data-theme` selector, then add the theme ID to `THEME_PRESETS`.
+The checked-in snapshot uses the `yellow` preset so a fresh clone matches the current desktop presentation palette: cool grey/white canvas with yellow actions and highlights. The `neutral` preset remains available in `/config`. Add future presets with CSS custom properties under a new `data-theme` selector, then add the theme ID to `THEME_PRESETS`.
 
 ## PWA behavior
 

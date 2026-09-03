@@ -7,6 +7,8 @@ describe('PWA shell', () => {
     expect(manifest.name).toBe('Prototype Starter')
     expect(manifest.display).toBe('standalone')
     expect(manifest.start_url).toBe('/')
+    expect(manifest.background_color).toBe('#f5f6f8')
+    expect(manifest.theme_color).toBe('#ffe512')
     expect(manifest).not.toHaveProperty('orientation')
     expect(manifest.icons).toEqual([
       expect.objectContaining({ src: '/icons/pwa-192x192.png', sizes: '192x192', purpose: 'any maskable' }),
