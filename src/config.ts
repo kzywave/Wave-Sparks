@@ -24,8 +24,8 @@ export interface ShellConfig {
 /** Replace this object with the payload copied from /config. */
 export const DEFAULT_SHELL_CONFIG: ShellConfig = {
   identity: {
-    name: 'Prototype Starter',
-    subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    name: 'Mini App Opportunities',
+    subtitle: 'Small tools. Connected value.',
   },
   theme: {
     preset: 'yellow',
