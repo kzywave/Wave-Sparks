@@ -77,54 +77,26 @@ export const PresentationNav: React.FC<PresentationNavProps> = ({
           const isRecommendedSlide = slide.id === 'recommended'
 
           return (
-            <div key={slide.id} className="nav-slide-group">
-              <button
-                type="button"
-                className={`nav-slide-item ${isSlideActive ? 'is-active' : ''}`}
-                aria-current={isSlideActive ? 'step' : undefined}
-                onClick={() => {
-                  onSelectSlide(idx, 0)
-                  if (onCloseMobile) onCloseMobile()
-                }}
-              >
-                <span className="nav-slide-num">0{slide.index}</span>
-                <div className="nav-slide-meta">
-                  <strong className="nav-slide-title">{slide.title}</strong>
-                </div>
-              </button>
-
-              {/* If this is the Recommended Ideas slide, show the 5 prototypes as sub-items */}
-              {isRecommendedSlide && (
-                <div className="nav-sub-slides-list">
-                  {RECOMMENDED_CONCEPTS.map((concept, cIdx) => {
-                    const isConceptActive = isSlideActive && activeConceptIndex === cIdx
-                    const depClass = concept.dependency.toLowerCase().replace(' ', '-')
-                    return (
-                      <button
-                        key={concept.id}
-                        type="button"
-                        className={`nav-sub-slide-item ${isConceptActive ? 'is-active' : ''}`}
-                        aria-label={`Jump to concept 4.${cIdx + 1}`}
-                        aria-current={isConceptActive ? 'step' : undefined}
-                        onClick={() => {
-                          onSelectSlide(idx, cIdx)
-                          if (onCloseMobile) onCloseMobile()
-                        }}
-                      >
-                        <span className="nav-sub-num" aria-hidden="true">4.{cIdx + 1}</span>
-                        <div className="nav-sub-meta" aria-hidden="true">
-                          <span className="nav-sub-title">{concept.name}</span>
-                          <span className="nav-sub-tag">{concept.shortTag}</span>
-                        </div>
-                        <span className={`badge-dep badge-dep--${depClass}`} aria-hidden="true">
-                          {concept.dependency}
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
+            <button
+              key={slide.id}
+              type="button"
+              className={`nav-slide-item ${isSlideActive ? 'is-active' : ''}`}
+              aria-current={isSlideActive ? 'step' : undefined}
+              onClick={() => {
+                onSelectSlide(idx)
+                if (onCloseMobile) onCloseMobile()
+              }}
+            >
+              <span className="nav-slide-num">0{slide.index}</span>
+              <div className="nav-slide-meta">
+                <strong className="nav-slide-title">{slide.title}</strong>
+                {isRecommendedSlide && isSlideActive && (
+                  <span className="nav-slide-proto-pill">
+                    Proto {activeConceptIndex + 1}/5 · {currentConcept.name}
+                  </span>
+                )}
+              </div>
+            </button>
           )
         })}
       </nav>

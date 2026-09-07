@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { App } from './App'
 import { ShellConfigProvider } from './ShellConfigContext'
 import './styles.css'
+import './presentation/presentation.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -224,9 +224,9 @@ describe('prototype starter', () => {
     await user.keyboard('{ArrowUp}')
     expect(screen.getByText(/Slide 4 of 8 · Prototype 4\/5/i)).toBeInTheDocument()
 
-    // Test clicking TOC sub-item directly (e.g. concept 4.2)
-    const tocProto2Btn = screen.getByRole('button', { name: 'Jump to concept 4.2' })
-    await user.click(tocProto2Btn)
+    // Test clicking prototype tab on slide 4 directly (e.g. concept 2: Can I Afford This?)
+    const proto2TabBtn = screen.getByRole('button', { name: /Can I Afford This\?/i })
+    await user.click(proto2TabBtn)
     expect(screen.getByText(/Slide 4 of 8 · Prototype 2\/5/i)).toBeInTheDocument()
     expect(screen.getByText(/Instant purchase runway check/i)).toBeInTheDocument()
   })

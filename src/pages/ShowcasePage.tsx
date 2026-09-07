@@ -11,6 +11,7 @@ import { RecommendedIdeasSlide } from '../presentation/components/RecommendedIde
 import { TitleSlide } from '../presentation/components/TitleSlide'
 import { WhyMiniAppsSlide } from '../presentation/components/WhyMiniAppsSlide'
 import { RECOMMENDED_CONCEPTS, SLIDES } from '../presentation/presentationData'
+import '../presentation/presentation.css'
 
 export const ShowcasePage: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0)
