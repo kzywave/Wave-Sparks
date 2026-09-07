@@ -40,14 +40,14 @@ export const SLIDES: SlideDefinition[] = [
       'Save & Plan: 8 concepts helping customers manage future runway.',
       'Spend & Share: 5 concepts addressing social and group expenses.',
       'Safety & Trust: 2 concepts building pre-transfer confidence.',
-      '5 high-conviction concepts prioritized for low-dependency validation.',
+      '3 high-conviction concepts prioritized for low-dependency validation.',
     ],
   },
   {
     id: 'recommended',
     index: 4,
     eyebrow: 'Priority Shortlist',
-    title: 'Five Concepts to Test First',
+    title: 'Three Concepts to Test First',
     summary: 'High customer utility, low build friction, and natural pathways into WavePay actions.',
     keyTakeaways: [
       'Compact structure answering the 5 manager evaluation questions.',
@@ -99,7 +99,7 @@ export const SLIDES: SlideDefinition[] = [
     summary: 'Recommended experiment sequence and summary answers to the core evaluation questions.',
     keyTakeaways: [
       'Phase 1: Build & test Save for Something + Can I Afford This?.',
-      'Phase 2: Money Calendar, Split It, and Health Check.',
+      'Phase 2: Money Calendar and Split It.',
       'Validate voluntary customer adoption first before investing in deep wallet plumbing.',
     ],
   },
@@ -158,7 +158,6 @@ export const LANDSCAPE_IDEAS: LandscapeIdea[] = [
     concept: 'Short 2-minute financial wellness checkup recommending one high-impact action.',
     category: 'Save & Plan',
     dependency: 'Very Low',
-    isRecommended: true,
   },
   {
     id: 'money-coach',
@@ -182,7 +181,6 @@ export const LANDSCAPE_IDEAS: LandscapeIdea[] = [
     concept: 'Instant bill splitting across people with direct per-person share amounts.',
     category: 'Spend & Share',
     dependency: 'Very Low',
-    isRecommended: true,
   },
   {
     id: 'group-money',
@@ -287,48 +285,6 @@ export const RECOMMENDED_CONCEPTS: RecommendedConcept[] = [
     },
     dependency: 'Low',
     targetDiscussionTime: '25s',
-  },
-  {
-    id: 'split-it',
-    name: 'Split It',
-    shortTag: 'Social Bill Divider',
-    problem: 'Dining out or shared group expenses require awkward mental math, manual tracking, and uncomfortable payment follow-ups.',
-    opportunity: 'Turn a friction-filled social moment into a 10-second lightweight calculator with instant shareable breakdowns.',
-    solution: 'Enter total bill, tax/tip, and count of participants. Displays per-person share and creates shareable payment cards.',
-    whyNeeded: 'Solves an immediate everyday friction and creates a direct bridge into P2P money requests and transfers.',
-    value: {
-      customer: [
-        'Fair, instant split with zero friction or arithmetic errors.',
-        'Effortless social coordination.',
-      ],
-      business: [
-        'Organic acquisition and viral loop as links/shares reach other Wave users.',
-        'Direct P2P transfer and payment initiation volume.',
-      ],
-    },
-    dependency: 'Very Low',
-    targetDiscussionTime: '20s',
-  },
-  {
-    id: 'money-health-check',
-    name: 'My Money Health Check',
-    shortTag: 'Personalized Next Step',
-    problem: 'Generic financial literacy articles are dull and do not tell users which single habit matters most for their specific situation.',
-    opportunity: 'Replace generic financial advice with a 3-question diagnostic that outputs exactly ONE high-impact action to take this week.',
-    solution: 'A 60-second assessment on emergency buffer, payday runway, and recurring bills, returning a conversational, human recommendation.',
-    whyNeeded: 'Behavioral advice works when it is hyper-targeted, empathetic, and requires minimal cognitive load.',
-    value: {
-      customer: [
-        'Dramatically reduces financial anxiety without feeling judged.',
-        'One simple, achievable challenge each week.',
-      ],
-      business: [
-        'Smart recommendation engine driving traffic into relevant Wave services and savings tools.',
-        'Builds deep trust as a helpful financial partner.',
-      ],
-    },
-    dependency: 'Very Low',
-    targetDiscussionTime: '20s',
   },
 ]
 

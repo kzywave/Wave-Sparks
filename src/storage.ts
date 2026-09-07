@@ -1,8 +1,8 @@
 import { DEFAULT_SHELL_CONFIG, THEME_PRESETS, type ShellConfig } from './config'
 
 export const ACCESS_STORAGE_KEY = 'pwa-prototype-access:v1'
-export const CONFIG_STORAGE_KEY = 'pwa-prototype-config:v1'
-const CONFIG_VERSION = 1
+export const CONFIG_STORAGE_KEY = 'pwa-prototype-config:v2'
+const CONFIG_VERSION = 2
 const HEX_COLOUR = /^#[0-9a-f]{6}$/i
 
 const isShellConfig = (value: unknown): value is ShellConfig => {
@@ -23,12 +23,20 @@ const isShellConfig = (value: unknown): value is ShellConfig => {
 
 export const loadConfig = (storage: Storage): ShellConfig => {
   try {
+    storage.removeItem('pwa-prototype-config:v1')
     const raw = storage.getItem(CONFIG_STORAGE_KEY)
     if (!raw) return DEFAULT_SHELL_CONFIG
     const stored = JSON.parse(raw) as { version?: number; config?: unknown }
-    return stored.version === CONFIG_VERSION && isShellConfig(stored.config)
-      ? stored.config
-      : DEFAULT_SHELL_CONFIG
+    if (stored.version === CONFIG_VERSION && isShellConfig(stored.config)) {
+      if (
+        stored.config.identity.name === 'Prototype Starter' ||
+        stored.config.identity.name === 'Mini App Opportunities'
+      ) {
+        return DEFAULT_SHELL_CONFIG
+      }
+      return stored.config
+    }
+    return DEFAULT_SHELL_CONFIG
   } catch {
     return DEFAULT_SHELL_CONFIG
   }

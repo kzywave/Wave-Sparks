@@ -1,13 +1,27 @@
 import React, { useState } from 'react'
+import { AnimatedText } from './AnimatedText'
 import { INITIATIVE_MAPPINGS } from '../presentationData'
 
-export const FragmentationSlide: React.FC = () => {
+export interface FragmentationSlideProps {
+  step?: number
+  onSelectStep?: (step: number) => void
+}
+
+export const FragmentationSlide: React.FC<FragmentationSlideProps> = ({
+  step = 0,
+  onSelectStep,
+}) => {
   const [viewMode, setViewMode] = useState<'internal' | 'customer'>('internal')
   const [activeInitiativeId, setActiveInitiativeId] = useState<string>('points')
 
   const activeInitiative =
     INITIATIVE_MAPPINGS.find((i) => i.id === activeInitiativeId) ??
     INITIATIVE_MAPPINGS[0]
+
+  const isBatch1Revealed = step >= 1
+  const isBatch2Revealed = step >= 2
+  const isInspectorRevealed = step >= 3
+  const isObservationRevealed = step >= 4
 
   return (
     <div className="slide-canvas">
@@ -17,12 +31,22 @@ export const FragmentationSlide: React.FC = () => {
           <div>
             <div className="eyebrow">Strategic Turning Point</div>
             <h2 className="slide-main-title">
-              We do not have an initiative problem.<br />
-              <span className="text-highlight">We have a connection problem.</span>
+              <AnimatedText effect="per-word-crossfade" text="We do not have an initiative problem." />
+              <br />
+              <AnimatedText
+                effect="per-word-crossfade"
+                delayMs={220}
+                highlightText="We have a connection problem."
+                text="We have a connection problem."
+              />
             </h2>
-            <p className="slide-sub-title">
-              What feels disconnected internally becomes visibly disconnected externally.
-            </p>
+            <AnimatedText
+              as="p"
+              effect="micro-scale-fade"
+              className="slide-sub-title"
+              delayMs={400}
+              text="What feels disconnected internally becomes visibly disconnected externally."
+            />
           </div>
 
           {/* View Toggle */}
@@ -49,12 +73,44 @@ export const FragmentationSlide: React.FC = () => {
         /* INTERNAL INITIATIVES VIEW */
         <div className="fragmentation-stage">
           <div className="initiatives-grid">
-            {INITIATIVE_MAPPINGS.map((item) => {
+            {INITIATIVE_MAPPINGS.map((item, idx) => {
               const isSelected = item.id === activeInitiativeId
+              const isCardRevealed = idx < 4 ? isBatch1Revealed : isBatch2Revealed
+              const targetStep = idx < 4 ? 1 : 2
+
+              if (!isCardRevealed) {
+                return (
+                  <div
+                    key={item.id}
+                    className="initiative-card initiative-card--placeholder"
+                    onClick={() => onSelectStep?.(targetStep)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        onSelectStep?.(targetStep)
+                      }
+                    }}
+                    aria-label={`Point ${targetStep}: Click to reveal ${item.initiative}`}
+                  >
+                    <div className="skeleton-badge-row">
+                      <span className="skeleton-block skeleton-pill" style={{ width: '4.5rem', height: '.9rem' }} />
+                      <span className="skeleton-hint-text">Click to reveal</span>
+                    </div>
+                    <span className="skeleton-block" style={{ width: '70%', height: '1.05rem', margin: '.2rem 0' }} />
+                    <div className="skeleton-desc-group">
+                      <span className="skeleton-block" style={{ width: '100%', height: '.75rem' }} />
+                      <span className="skeleton-block" style={{ width: '85%', height: '.75rem' }} />
+                    </div>
+                  </div>
+                )
+              }
+
               return (
                 <div
                   key={item.id}
-                  className={`initiative-card ${isSelected ? 'is-selected' : ''}`}
+                  className={`initiative-card initiative-card--revealed ${isSelected ? 'is-selected' : ''}`}
                   onClick={() => setActiveInitiativeId(item.id)}
                   role="button"
                   tabIndex={0}
@@ -74,18 +130,40 @@ export const FragmentationSlide: React.FC = () => {
           </div>
 
           {/* Connected External Preview Inspector */}
-          <div className="connected-inspector">
-            <div className="inspector-header">
-              <span className="inspector-badge">External Symptom Generated</span>
-              <strong>{activeInitiative.customerSymptom}</strong>
+          {isInspectorRevealed ? (
+            <div className="connected-inspector connected-inspector--revealed">
+              <div className="inspector-header">
+                <span className="inspector-badge">External Symptom Generated</span>
+                <strong>{activeInitiative.customerSymptom}</strong>
+              </div>
+              <div className="inspector-bubble">
+                {activeInitiative.symptomDetail}
+              </div>
+              <p className="inspector-caption">
+                From <strong>{activeInitiative.team}</strong>: Individually valid and well-intentioned, but delivered to the customer as an isolated, unlinked prompt.
+              </p>
             </div>
-            <div className="inspector-bubble">
-              {activeInitiative.symptomDetail}
+          ) : (
+            <div
+              className="connected-inspector connected-inspector--placeholder"
+              onClick={() => onSelectStep?.(3)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onSelectStep?.(3)
+                }
+              }}
+              aria-label="Point 3: Click to reveal External Preview Inspector"
+            >
+              <div className="skeleton-badge-row">
+                <span className="skeleton-block skeleton-pill" style={{ width: '11rem', height: '1rem' }} />
+                <span className="skeleton-hint-text">Click to reveal external touchpoint symptom</span>
+              </div>
+              <span className="skeleton-block" style={{ width: '100%', height: '2rem', borderRadius: '.75rem', marginTop: '.4rem' }} />
             </div>
-            <p className="inspector-caption">
-              From <strong>{activeInitiative.team}</strong>: Individually valid and well-intentioned, but delivered to the customer as an isolated, unlinked prompt.
-            </p>
-          </div>
+          )}
         </div>
       ) : (
         /* CUSTOMER APP EXPERIENCE VIEW */
@@ -130,9 +208,33 @@ export const FragmentationSlide: React.FC = () => {
         </div>
       )}
 
-      <div className="analogous-rule">
-        <strong>Design observation:</strong> We do not blame teams or imply lack of internal effort. This is an architecture opportunity: Mini Apps can be the connecting tissue that ties these existing initiatives together.
-      </div>
+      {isObservationRevealed ? (
+        <div className="analogous-rule analogous-rule--revealed">
+          <strong>Design observation:</strong> We do not blame teams or imply lack of internal effort. This is an architecture opportunity: Mini Apps can be the connecting tissue that ties these existing initiatives together.
+        </div>
+      ) : (
+        <div
+          className="analogous-rule analogous-rule--placeholder"
+          onClick={() => onSelectStep?.(4)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              onSelectStep?.(4)
+            }
+          }}
+          aria-label="Point 4: Click to reveal design observation"
+        >
+          <div className="skeleton-quote-content">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '.35rem', width: '85%' }}>
+              <span className="skeleton-block skeleton-pill" style={{ width: '9.5rem', height: '.75rem' }} />
+              <span className="skeleton-block" style={{ width: '100%', height: '.85rem' }} />
+            </div>
+            <span className="skeleton-hint-text">Click to reveal</span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

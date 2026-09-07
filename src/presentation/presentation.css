@@ -2,6 +2,10 @@
    MINI APP OPPORTUNITY PRESENTATION DECK STYLES
    ========================================================================== */
 
+.presentation-shell .shell-header {
+  padding: .9rem clamp(1rem, 1.5vw, 1.4rem);
+}
+
 .deck-layout {
   flex: 1 1 auto;
   min-height: 0;
@@ -189,6 +193,18 @@
   line-height: 1.45;
 }
 
+.takeaways-item--active {
+  color: var(--ink);
+  font-weight: 700;
+  background: var(--active-bg);
+  border-left: 3px solid var(--accent);
+  padding: .25rem .5rem;
+  border-radius: 0 .4rem .4rem 0;
+  margin-left: -1.1rem;
+  padding-left: .8rem;
+  transition: all .2s ease;
+}
+
 .nav-controls {
   display: flex;
   flex-direction: column;
@@ -249,10 +265,6 @@
   font-size: .8rem;
   font-weight: 700;
   color: var(--muted);
-}
-
-.mobile-toc-btn {
-  display: none;
 }
 
 .deck-progress-pill {
@@ -410,6 +422,27 @@
   display: flex;
   flex-direction: column;
   gap: .5rem;
+  min-height: 11rem;
+  position: relative;
+  transition: border-color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.pillar-card--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+}
+
+.pillar-card--placeholder:hover {
+  border-color: var(--active-border);
+  border-style: solid;
+  background: var(--surface);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.pillar-card--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .pillar-num {
@@ -444,6 +477,93 @@
   font-weight: 600;
   color: var(--ink);
   font-style: italic;
+  min-height: 3.5rem;
+  display: flex;
+  align-items: center;
+  transition: all .2s ease;
+}
+
+.title-footer-quote--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border-left: 3px dashed var(--border);
+}
+
+.title-footer-quote--placeholder:hover {
+  border-left-color: var(--accent);
+  border-left-style: solid;
+  background: var(--surface);
+}
+
+.title-footer-quote--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Skeleton Loading Elements */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-block {
+  display: block;
+  border-radius: .35rem;
+  background: linear-gradient(
+    90deg,
+    rgba(140, 155, 170, 0.12) 0%,
+    rgba(140, 155, 170, 0.26) 50%,
+    rgba(140, 155, 170, 0.12) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+}
+
+.skeleton-pill {
+  border-radius: 99px;
+}
+
+.skeleton-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 1.4rem;
+}
+
+.skeleton-hint-text {
+  font-size: .7rem;
+  font-weight: 600;
+  color: var(--muted);
+  opacity: .65;
+  letter-spacing: .02em;
+  transition: opacity .15s ease, color .15s ease;
+}
+
+.pillar-card--placeholder:hover .skeleton-hint-text,
+.card-box--placeholder:hover .skeleton-hint-text,
+.title-footer-quote--placeholder:hover .skeleton-hint-text,
+.banner-rule--placeholder:hover .skeleton-hint-text {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.skeleton-desc-group {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  margin-top: .35rem;
+}
+
+.skeleton-quote-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
 }
 
 /* Slide 2 Four Pillars */
@@ -461,6 +581,27 @@
   display: flex;
   flex-direction: column;
   gap: .5rem;
+  min-height: 10.5rem;
+  position: relative;
+  transition: border-color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.card-box--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+}
+
+.card-box--placeholder:hover {
+  border-color: var(--active-border);
+  border-style: solid;
+  background: var(--surface);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.card-box--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .card-box__badge-row {
@@ -496,6 +637,24 @@
   display: flex;
   flex-direction: column;
   gap: .25rem;
+  min-height: 4.5rem;
+  transition: all .2s ease;
+}
+
+.banner-rule--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+}
+
+.banner-rule--placeholder:hover {
+  border-color: var(--active-border);
+  border-style: solid;
+  background: var(--active-bg);
+}
+
+.banner-rule--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .banner-rule__label {
@@ -510,6 +669,17 @@
   font-size: .92rem;
   color: var(--ink);
   line-height: 1.45;
+}
+
+@keyframes card-reveal-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Slide 3 Opportunity Landscape */
@@ -1449,6 +1619,27 @@
   display: flex;
   flex-direction: column;
   gap: .65rem;
+  min-height: 12rem;
+  position: relative;
+  transition: border-color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.comparison-card--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+}
+
+.comparison-card--placeholder:hover {
+  border-color: var(--active-border);
+  border-style: solid;
+  background: var(--surface);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.comparison-card--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .comparison-card__tag {
@@ -1505,6 +1696,27 @@
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+  min-height: 9.5rem;
+  position: relative;
+  transition: border-color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.flow-spine-container--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+}
+
+.flow-spine-container--placeholder:hover {
+  border-color: var(--active-border);
+  border-style: solid;
+  background: var(--surface);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.flow-spine-container--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .flow-spine-heading {
@@ -1575,6 +1787,27 @@
   font-size: .82rem;
   color: #725600;
   line-height: 1.5;
+  min-height: 3.5rem;
+  display: flex;
+  align-items: center;
+  transition: all .2s ease;
+}
+
+.guardrail-callout--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+  color: var(--muted);
+}
+
+.guardrail-callout--placeholder:hover {
+  border-color: var(--active-border);
+  border-style: solid;
+  background: #fdfae8;
+}
+
+.guardrail-callout--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Slide 6 Fragmentation */
@@ -1626,7 +1859,27 @@
   display: flex;
   flex-direction: column;
   gap: .4rem;
+  min-height: 9rem;
+  position: relative;
   transition: all .15s ease;
+}
+
+.initiative-card--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+}
+
+.initiative-card--placeholder:hover {
+  border-color: var(--active-border);
+  border-style: solid;
+  background: var(--surface);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.initiative-card--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .initiative-card:hover {
@@ -1690,6 +1943,24 @@
   display: flex;
   flex-direction: column;
   gap: .5rem;
+  min-height: 7.5rem;
+  transition: all .2s ease;
+}
+
+.connected-inspector--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+}
+
+.connected-inspector--placeholder:hover {
+  border-color: var(--active-border);
+  border-style: solid;
+  background: #fffdf5;
+}
+
+.connected-inspector--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .inspector-header {
@@ -1874,6 +2145,26 @@
   border: 1px solid var(--border);
   font-size: .8rem;
   color: var(--muted);
+  min-height: 3.5rem;
+  display: flex;
+  align-items: center;
+  transition: all .2s ease;
+}
+
+.analogous-rule--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+}
+
+.analogous-rule--placeholder:hover {
+  border-color: var(--active-border);
+  border-style: solid;
+  background: var(--surface);
+}
+
+.analogous-rule--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Slide 7 Connected Model */
@@ -1890,6 +2181,24 @@
   display: flex;
   flex-direction: column;
   gap: .9rem;
+  min-height: 5.5rem;
+  transition: all .2s ease;
+}
+
+.pattern-box--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+}
+
+.pattern-box--placeholder:hover {
+  border-color: var(--active-border);
+  border-style: solid;
+  background: var(--surface);
+}
+
+.pattern-box--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .pattern-tag {
@@ -1991,6 +2300,26 @@
   display: flex;
   flex-direction: column;
   gap: .75rem;
+  min-height: 11rem;
+  transition: all .2s ease;
+}
+
+.scenarios-container--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+
+.scenarios-container--placeholder:hover {
+  border-color: var(--active-border);
+  border-style: solid;
+  background: var(--surface);
+}
+
+.scenarios-container--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .scenarios-title {
@@ -2058,6 +2387,27 @@
   display: flex;
   flex-direction: column;
   gap: .9rem;
+  min-height: 14rem;
+  position: relative;
+  transition: border-color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.roadmap-card--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+}
+
+.roadmap-card--placeholder:hover {
+  border-color: var(--active-border);
+  border-style: solid;
+  background: var(--surface);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.roadmap-card--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .roadmap-card--priority {
@@ -2122,6 +2472,24 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  min-height: 12rem;
+  transition: all .2s ease;
+}
+
+.homework-container--placeholder {
+  cursor: pointer;
+  background: var(--surface-soft);
+  border: 1px dashed var(--border);
+}
+
+.homework-container--placeholder:hover {
+  border-color: var(--active-border);
+  border-style: solid;
+  background: var(--surface);
+}
+
+.homework-container--revealed {
+  animation: card-reveal-fade .32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .homework-heading {
@@ -2215,14 +2583,6 @@
     display: flex;
   }
 
-  .mobile-toc-btn {
-    display: inline-flex;
-  }
-
-  .deck-progress-pill {
-    display: none;
-  }
-
   .stage-mobile-controls {
     display: flex;
   }
@@ -2270,8 +2630,109 @@
     padding: .45rem .65rem;
     font-size: .72rem;
   }
-  .value-hypo-grid {
-    grid-template-columns: 1fr;
+}
+
+/* ==========================================================================
+   ANIMATE-TEXT SPECIFICATIONS (ANIMATION CATALOG BACKED)
+   ========================================================================== */
+
+/* Accessibility utility for screen readers and DOM queries */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.anim-visual-content {
+  display: inline;
+}
+
+/* 1. Soft Blur In (per-character, Apple hero title reveal) */
+@keyframes anim-soft-blur-char {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
   }
 }
 
+.anim-soft-blur-root {
+  display: inline;
+}
+
+.anim-word-cluster {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.anim-char {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+  animation: anim-soft-blur-char 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--anim-base-delay, 0ms) + var(--char-idx, 0) * 20ms);
+}
+
+/* 2. Per-Word Crossfade (per-word, Apple Keynote calm drift) */
+@keyframes anim-per-word-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anim-per-word-root {
+  display: inline;
+}
+
+.anim-word {
+  display: inline-block;
+  will-change: transform, opacity;
+  animation: anim-per-word-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--anim-base-delay, 0ms) + var(--word-idx, 0) * 45ms);
+}
+
+/* 3. Micro Scale Fade (whole phrase, secondary labels & subtitles) */
+@keyframes anim-micro-scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.anim-micro-scale-fade {
+  display: block;
+  will-change: transform, opacity;
+  animation: anim-micro-scale-in 0.45s cubic-bezier(0.32, 0.72, 0, 1) both;
+  animation-delay: var(--anim-base-delay, 150ms);
+}
+
+/* 4. Accessibility: Prefers Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .anim-char,
+  .anim-word,
+  .anim-micro-scale-fade {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}

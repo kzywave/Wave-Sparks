@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
+import { AnimatedText } from './AnimatedText'
 import { DeviceFrame } from '../../components/DeviceFrame'
 import { RECOMMENDED_CONCEPTS } from '../presentationData'
 import { CanIAffordThisMock } from './mocks/CanIAffordThisMock'
-import { HealthCheckMock } from './mocks/HealthCheckMock'
 import { MoneyCalendarMock } from './mocks/MoneyCalendarMock'
 import { SaveForSomethingMock } from './mocks/SaveForSomethingMock'
-import { SplitItMock } from './mocks/SplitItMock'
 
 interface RecommendedIdeasSlideProps {
   activeConceptIndex?: number
@@ -39,10 +38,6 @@ export const RecommendedIdeasSlide: React.FC<RecommendedIdeasSlideProps> = ({
         return <CanIAffordThisMock />
       case 'money-calendar':
         return <MoneyCalendarMock />
-      case 'split-it':
-        return <SplitItMock />
-      case 'money-health-check':
-        return <HealthCheckMock />
       default:
         return <SaveForSomethingMock />
     }
@@ -54,7 +49,7 @@ export const RecommendedIdeasSlide: React.FC<RecommendedIdeasSlideProps> = ({
     <div className="slide-canvas slide-canvas--interactive">
       {/* Slide Header & Concept Selector */}
       <div className="slide-header-block">
-        <div className="eyebrow">Priority Shortlist · 5 Concepts</div>
+        <div className="eyebrow">Priority Shortlist · {RECOMMENDED_CONCEPTS.length} Concepts</div>
         <div className="concept-selector-bar">
           {RECOMMENDED_CONCEPTS.map((concept, idx) => (
             <button
@@ -90,7 +85,13 @@ export const RecommendedIdeasSlide: React.FC<RecommendedIdeasSlideProps> = ({
             <div className="concept-card-top">
               <div>
                 <span className="badge-subtle">{currentConcept.shortTag}</span>
-                <h3 className="concept-card-title">{currentConcept.name}</h3>
+                <AnimatedText
+                  key={currentConcept.id}
+                  as="h3"
+                  effect="per-word-crossfade"
+                  className="concept-card-title"
+                  text={currentConcept.name}
+                />
               </div>
               <span className={`badge-dep badge-dep--${depClass}`}>
                 {currentConcept.dependency} Dependency

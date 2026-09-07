@@ -4,7 +4,7 @@ import manifestSource from '../public/manifest.json?raw'
 describe('PWA shell', () => {
   it('declares a standalone manifest with generic raster icons', () => {
     const manifest = JSON.parse(manifestSource)
-    expect(manifest.name).toBe('Prototype Starter')
+    expect(manifest.name).toBe('Product Initiatives')
     expect(manifest.display).toBe('standalone')
     expect(manifest.start_url).toBe('/')
     expect(manifest.background_color).toBe('#f5f6f8')

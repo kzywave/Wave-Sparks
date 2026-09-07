@@ -16,10 +16,11 @@ import '../presentation/presentation.css'
 export const ShowcasePage: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0)
   const [activeConceptIndex, setActiveConceptIndex] = useState(0)
+  const [slideStep, setSlideStep] = useState(0)
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
   const stageRef = React.useRef<HTMLElement>(null)
 
-  // Scroll to top of stage canvas whenever the slide or prototype changes
+  // Scroll to top of stage canvas only when the slide or prototype changes, NOT when scrubbing talking points
   useEffect(() => {
     if (stageRef.current) {
       if (typeof stageRef.current.scrollTo === 'function') {
@@ -32,6 +33,7 @@ export const ShowcasePage: React.FC = () => {
 
   const handleSelectSlide = (slideIndex: number, conceptIndex?: number) => {
     setActiveIndex(slideIndex)
+    setSlideStep(0)
     if (slideIndex === 3) {
       if (conceptIndex !== undefined) {
         setActiveConceptIndex(conceptIndex)
@@ -39,51 +41,116 @@ export const ShowcasePage: React.FC = () => {
     } else {
       setActiveConceptIndex(0)
     }
+    if (stageRef.current) {
+      if (typeof stageRef.current.scrollTo === 'function') {
+        stageRef.current.scrollTo({ top: 0, behavior: 'instant' })
+      } else {
+        stageRef.current.scrollTop = 0
+      }
+    }
   }
 
   const goNext = React.useCallback(() => {
-    // If on Slide 4 (recommended ideas), step through the 5 prototypes first
-    if (activeIndex === 3) {
-      if (activeConceptIndex < RECOMMENDED_CONCEPTS.length - 1) {
-        setActiveConceptIndex((curr) => curr + 1)
-        return
-      }
+    // If on Slide 1 (Title), step through 4 talking points
+    if (activeIndex === 0 && slideStep < 4) {
+      setSlideStep((curr) => curr + 1)
+      return
+    }
+
+    // If on Slide 2 (Why Mini Apps), step through 5 talking points
+    if (activeIndex === 1 && slideStep < 5) {
+      setSlideStep((curr) => curr + 1)
+      return
+    }
+
+    // If on Slide 4 (recommended ideas), step through the prototypes first
+    if (activeIndex === 3 && activeConceptIndex < RECOMMENDED_CONCEPTS.length - 1) {
+      setActiveConceptIndex((curr) => curr + 1)
+      return
+    }
+
+    // If on Slide 5 (Points Connection), step through 4 talking points
+    if (activeIndex === 4 && slideStep < 4) {
+      setSlideStep((curr) => curr + 1)
+      return
+    }
+
+    // If on Slide 6 (Fragmentation), step through 4 talking points
+    if (activeIndex === 5 && slideStep < 4) {
+      setSlideStep((curr) => curr + 1)
+      return
+    }
+
+    // If on Slide 7 (Connected Model), step through 4 talking points
+    if (activeIndex === 6 && slideStep < 4) {
+      setSlideStep((curr) => curr + 1)
+      return
+    }
+
+    // If on Slide 8 (Recommendation), step through 3 talking points
+    if (activeIndex === 7 && slideStep < 3) {
+      setSlideStep((curr) => curr + 1)
+      return
     }
 
     // Advance to next slide
     if (activeIndex < SLIDES.length - 1) {
       const nextIndex = activeIndex + 1
       setActiveIndex(nextIndex)
+      setSlideStep(0)
       if (nextIndex === 3) {
         setActiveConceptIndex(0)
       }
     }
-  }, [activeIndex, activeConceptIndex])
+  }, [activeIndex, slideStep, activeConceptIndex])
 
   const goPrev = React.useCallback(() => {
+    // If on slides with sub-steps and not at step 0, step backward through talking points
+    if (
+      (activeIndex === 0 ||
+        activeIndex === 1 ||
+        activeIndex === 4 ||
+        activeIndex === 5 ||
+        activeIndex === 6 ||
+        activeIndex === 7) &&
+      slideStep > 0
+    ) {
+      setSlideStep((curr) => curr - 1)
+      return
+    }
+
     // If on Slide 4 and not at the first prototype, step backward through prototypes
-    if (activeIndex === 3) {
-      if (activeConceptIndex > 0) {
-        setActiveConceptIndex((curr) => curr - 1)
-        return
-      }
+    if (activeIndex === 3 && activeConceptIndex > 0) {
+      setActiveConceptIndex((curr) => curr - 1)
+      return
     }
 
     // Go back to previous slide
     if (activeIndex > 0) {
       const prevIndex = activeIndex - 1
       setActiveIndex(prevIndex)
-      if (prevIndex === 3) {
-        // When stepping back into Slide 4, land on the last prototype
+      if (prevIndex === 0) {
+        setSlideStep(4)
+      } else if (prevIndex === 1) {
+        setSlideStep(5)
+      } else if (prevIndex === 3) {
         setActiveConceptIndex(RECOMMENDED_CONCEPTS.length - 1)
+        setSlideStep(0)
+      } else if (prevIndex === 4) {
+        setSlideStep(4)
+      } else if (prevIndex === 5) {
+        setSlideStep(4)
+      } else if (prevIndex === 6) {
+        setSlideStep(4)
+      } else {
+        setSlideStep(0)
       }
     }
-  }, [activeIndex, activeConceptIndex])
+  }, [activeIndex, slideStep, activeConceptIndex])
 
-  const isPrevDisabled = activeIndex === 0 && activeConceptIndex === 0
+  const isPrevDisabled = activeIndex === 0 && slideStep === 0
   const isNextDisabled =
-    activeIndex === SLIDES.length - 1 &&
-    (activeIndex !== 3 || activeConceptIndex === RECOMMENDED_CONCEPTS.length - 1)
+    activeIndex === SLIDES.length - 1 && slideStep === 3
 
   // Keyboard navigation support: ArrowDown, ArrowUp, ArrowRight, ArrowLeft, PageDown, PageUp, Space
   useEffect(() => {
@@ -122,9 +189,19 @@ export const ShowcasePage: React.FC = () => {
   const renderActiveSlide = () => {
     switch (SLIDES[activeIndex].id) {
       case 'title':
-        return <TitleSlide />
+        return (
+          <TitleSlide
+            step={slideStep}
+            onSelectStep={(step) => setSlideStep(step)}
+          />
+        )
       case 'why-mini-apps':
-        return <WhyMiniAppsSlide />
+        return (
+          <WhyMiniAppsSlide
+            step={slideStep}
+            onSelectStep={(step) => setSlideStep(step)}
+          />
+        )
       case 'idea-landscape':
         return <IdeaLandscapeSlide />
       case 'recommended':
@@ -135,27 +212,71 @@ export const ShowcasePage: React.FC = () => {
           />
         )
       case 'points-connection':
-        return <PointsConnectionSlide />
+        return (
+          <PointsConnectionSlide
+            step={slideStep}
+            onSelectStep={(step) => setSlideStep(step)}
+          />
+        )
       case 'fragmentation':
-        return <FragmentationSlide />
+        return (
+          <FragmentationSlide
+            step={slideStep}
+            onSelectStep={(step) => setSlideStep(step)}
+          />
+        )
       case 'connected-model':
-        return <ConnectedModelSlide />
+        return (
+          <ConnectedModelSlide
+            step={slideStep}
+            onSelectStep={(step) => setSlideStep(step)}
+          />
+        )
       case 'recommendation':
-        return <RecommendationSlide />
+        return (
+          <RecommendationSlide
+            step={slideStep}
+            onSelectStep={(step) => setSlideStep(step)}
+          />
+        )
       default:
         return <TitleSlide />
     }
   }
 
-  const headerProgressText =
-    activeIndex === 3
-      ? `Slide 4 of ${SLIDES.length} · Prototype ${activeConceptIndex + 1}/${RECOMMENDED_CONCEPTS.length}`
-      : `Slide ${activeIndex + 1} of ${SLIDES.length}`
+  let headerProgressText = `Slide ${activeIndex + 1} of ${SLIDES.length}`
+  if (activeIndex === 0) {
+    headerProgressText = `Slide 1 of ${SLIDES.length} · ${slideStep === 0 ? 'Overview' : `Point ${slideStep}/4`}`
+  } else if (activeIndex === 1) {
+    headerProgressText = `Slide 2 of ${SLIDES.length} · ${slideStep === 0 ? 'Overview' : `Point ${slideStep}/5`}`
+  } else if (activeIndex === 3) {
+    headerProgressText = `Slide 4 of ${SLIDES.length} · Prototype ${activeConceptIndex + 1}/${RECOMMENDED_CONCEPTS.length}`
+  } else if (activeIndex === 4) {
+    headerProgressText = `Slide 5 of ${SLIDES.length} · ${slideStep === 0 ? 'Overview' : `Point ${slideStep}/4`}`
+  } else if (activeIndex === 5) {
+    headerProgressText = `Slide 6 of ${SLIDES.length} · ${slideStep === 0 ? 'Overview' : `Point ${slideStep}/4`}`
+  } else if (activeIndex === 6) {
+    headerProgressText = `Slide 7 of ${SLIDES.length} · ${slideStep === 0 ? 'Overview' : `Point ${slideStep}/4`}`
+  } else if (activeIndex === 7) {
+    headerProgressText = `Slide 8 of ${SLIDES.length} · ${slideStep === 0 ? 'Overview' : `Point ${slideStep}/3`}`
+  }
 
-  const mobileProgressText =
-    activeIndex === 3
-      ? `Slide 4.${activeConceptIndex + 1}/${SLIDES.length}`
-      : `Slide ${activeIndex + 1}/${SLIDES.length}`
+  const mobileCountText =
+    activeIndex === 0
+      ? `Slide 1 · ${slideStep === 0 ? 'Overview' : `${slideStep}/4`}`
+      : activeIndex === 1
+      ? `Slide 2 · ${slideStep === 0 ? 'Overview' : `${slideStep}/5`}`
+      : activeIndex === 3
+      ? `Slide 4 · Proto ${activeConceptIndex + 1}/${RECOMMENDED_CONCEPTS.length}`
+      : activeIndex === 4
+      ? `Slide 5 · ${slideStep === 0 ? 'Overview' : `${slideStep}/4`}`
+      : activeIndex === 5
+      ? `Slide 6 · ${slideStep === 0 ? 'Overview' : `${slideStep}/4`}`
+      : activeIndex === 6
+      ? `Slide 7 · ${slideStep === 0 ? 'Overview' : `${slideStep}/4`}`
+      : activeIndex === 7
+      ? `Slide 8 · ${slideStep === 0 ? 'Overview' : `${slideStep}/3`}`
+      : `${activeIndex + 1} / ${SLIDES.length}`
 
   return (
     <div className="presentation-shell">
@@ -166,15 +287,6 @@ export const ShowcasePage: React.FC = () => {
         </div>
 
         <div className="shell-header__actions">
-          {/* Mobile TOC Drawer trigger */}
-          <button
-            type="button"
-            className="button mobile-toc-btn"
-            onClick={() => setIsMobileNavOpen((prev) => !prev)}
-          >
-            ☰ {mobileProgressText}
-          </button>
-
           <span className="deck-progress-pill">
             {headerProgressText}
           </span>
@@ -190,6 +302,7 @@ export const ShowcasePage: React.FC = () => {
         <PresentationNav
           activeIndex={activeIndex}
           activeConceptIndex={activeConceptIndex}
+          slideStep={slideStep}
           onSelectSlide={handleSelectSlide}
           onPrev={goPrev}
           onNext={goNext}
@@ -201,7 +314,7 @@ export const ShowcasePage: React.FC = () => {
 
         {/* Presentation Stage Canvas */}
         <section className="deck-stage" ref={stageRef} aria-live="polite">
-          <div className="deck-stage__inner">
+          <div className="deck-stage__inner" key={SLIDES[activeIndex].id}>
             {renderActiveSlide()}
           </div>
 
@@ -216,9 +329,7 @@ export const ShowcasePage: React.FC = () => {
               ← Prev
             </button>
             <span className="stage-mobile-count">
-              {activeIndex === 3
-                ? `Slide 4 · Proto ${activeConceptIndex + 1}/${RECOMMENDED_CONCEPTS.length}`
-                : `${activeIndex + 1} / ${SLIDES.length}`}
+              {mobileCountText}
             </span>
             <button
               className="button button--primary"

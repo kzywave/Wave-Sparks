@@ -25,7 +25,7 @@ describe('prototype starter', () => {
     renderApp('/showcase')
     const heading = await screen.findByRole('heading', { level: 1 })
     expect(heading).toHaveTextContent(/Small tools/i)
-    expect(screen.getAllByText('Slide 1 of 8').length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Slide 1 of 8/).length).toBeGreaterThan(0)
   })
 
   it('accepts the development code and restores the intended route', async () => {
@@ -81,17 +81,84 @@ describe('prototype starter', () => {
     expect(device).toHaveAttribute('data-preview-mode', 'actual')
   })
 
-  it('moves through presentation slides in /showcase', async () => {
+  it('moves through presentation slides and talking points in /showcase', async () => {
     const user = userEvent.setup()
     renderApp('/showcase')
 
     const heading = await screen.findByRole('heading', { level: 1 })
     expect(heading).toHaveTextContent(/Small tools/i)
     const nextButtons = screen.getAllByRole('button', { name: /Next/i })
-    await user.click(nextButtons[0])
 
+    // Initially cards are placeholders with click-to-reveal accessible labels
+    expect(screen.getByRole('button', { name: /Point 1: Click to reveal Real Customer Utility/i })).toBeInTheDocument()
+
+    // Step through Slide 1: 4 steps (3 pillars + 1 quote)
+    await user.click(nextButtons[0]) // Point 1 revealed
+    expect(screen.getAllByText(/Point 1\/4/).length).toBeGreaterThan(0)
+    expect(screen.getByText('Real Customer Utility')).toBeInTheDocument()
+
+    // Clicking directly on Point 3 placeholder reveals up to Point 3
+    const point3Placeholder = screen.getByRole('button', { name: /Point 3: Click to reveal Connected Ecosystem/i })
+    await user.click(point3Placeholder)
+    expect(screen.getByText('Connected Ecosystem')).toBeInTheDocument()
+    expect(screen.getAllByText(/Point 3\/4/).length).toBeGreaterThan(0)
+
+    // Advance to step 4 (Quote)
+    await user.click(nextButtons[0])
+    expect(screen.getByText(/If we removed the WavePay logo/i)).toBeInTheDocument()
+
+    // Advance to Slide 2
+    await user.click(nextButtons[0])
     expect(await screen.findByRole('heading', { name: /We already have a low-dependency way to experiment\./i })).toBeInTheDocument()
-    expect(screen.getAllByText('Slide 2 of 8').length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Slide 2 of 8/).length).toBeGreaterThan(0)
+
+    // Slide 2 initially has placeholder cards
+    expect(screen.getByRole('button', { name: /Point 1: Click to reveal Existing Framework/i })).toBeInTheDocument()
+
+    // Stepping back returns to Slide 1 fully revealed (step 4)
+    const prevButtons = screen.getAllByRole('button', { name: /Prev/i })
+    await user.click(prevButtons[0])
+    expect(screen.getAllByText(/Point 4\/4/).length).toBeGreaterThan(0)
+  })
+
+  it('preserves stage scroll position when scrubbing or clicking to reveal, but resets on slide change', async () => {
+    const user = userEvent.setup()
+    grantAccess()
+    renderApp('/presentation')
+
+    const stage = document.querySelector('.deck-stage') as HTMLElement
+    expect(stage).toBeInTheDocument()
+
+    // Simulate the user scrolling down in the presentation stage
+    stage.scrollTop = 320
+    expect(stage.scrollTop).toBe(320)
+
+    // Scrub talking point on current slide (Slide 1 Point 1)
+    const nextButtons = screen.getAllByRole('button', { name: /Next/i })
+    await user.click(nextButtons[0])
+    expect(screen.getAllByText(/Point 1\/4/).length).toBeGreaterThan(0)
+
+    // Scroll position MUST NOT be reset to 0
+    expect(stage.scrollTop).toBe(320)
+
+    // Click placeholder to reveal Point 2
+    const point2Placeholder = screen.getByRole('button', { name: /Point 2: Click to reveal Low-Dependency Speed/i })
+    await user.click(point2Placeholder)
+    expect(screen.getAllByText(/Point 2\/4/).length).toBeGreaterThan(0)
+
+    // Scroll position MUST still be preserved
+    expect(stage.scrollTop).toBe(320)
+
+    // Advance through the remaining points to Slide 2
+    await user.click(nextButtons[0]) // Point 3
+    expect(stage.scrollTop).toBe(320)
+    await user.click(nextButtons[0]) // Point 4
+    expect(stage.scrollTop).toBe(320)
+
+    // Moving to Slide 2 (a new slide) should reset scroll position to 0
+    await user.click(nextButtons[0])
+    expect(screen.getAllByText(/Slide 2 of 8/).length).toBeGreaterThan(0)
+    expect(stage.scrollTop).toBe(0)
   })
 
   it('persists config edits and resets to checked-in defaults', async () => {
@@ -111,7 +178,7 @@ describe('prototype starter', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Configuration copied.')
 
     await user.click(screen.getByRole('button', { name: 'Reset defaults' }))
-    expect(screen.getAllByText('Mini App Opportunities').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Product Initiatives').length).toBeGreaterThan(0)
     expect(window.localStorage.getItem(CONFIG_STORAGE_KEY)).toBeNull()
     expect(document.documentElement).toHaveAttribute('data-theme', 'yellow')
     expect(document.documentElement.style.getPropertyValue('--accent')).toBe('#ffcb05')
@@ -133,12 +200,43 @@ describe('prototype starter', () => {
     expect(screen.getByText('430×932')).toBeInTheDocument()
   })
 
+  it('highlights only the 3 shortlisted concepts matching slide 4 on slide 3 table', async () => {
+    const user = userEvent.setup()
+    renderApp('/showcase')
+
+    // Navigate to Slide 3 (Opportunity Landscape)
+    const slide3Button = screen.getByText('Opportunity Landscape').closest('button')!
+    await user.click(slide3Button)
+
+    expect(screen.getByText(/3 shortlisted for first testing/i)).toBeInTheDocument()
+    expect(screen.getByText(/3 priority concepts/i)).toBeInTheDocument()
+
+    // Query tinted rows with class landscape-row--recommended
+    const recommendedRows = document.querySelectorAll('.landscape-row--recommended')
+    expect(recommendedRows.length).toBe(3)
+
+    // Verify the 3 tinted rows match slide 4 concepts
+    const recommendedTitles = Array.from(recommendedRows).map((row) =>
+      row.querySelector('.landscape-cell-title')?.textContent?.trim()
+    )
+    expect(recommendedTitles).toEqual([
+      'Can I Afford This?',
+      'Save for Something',
+      'Money Calendar',
+    ])
+
+    // Verify Split It is present in the table but not tinted
+    const splitItCell = screen.getByText('Split It')
+    const splitItRow = splitItCell.closest('tr')
+    expect(splitItRow).not.toHaveClass('landscape-row--recommended')
+  })
+
   it('renders phone prototypes and phone chrome in RecommendedIdeasSlide', async () => {
     const user = userEvent.setup()
     renderApp('/showcase')
 
     // Navigate to Slide 4 (Recommended concepts with phone prototypes)
-    const slide4Button = screen.getByText('Five Concepts to Test First').closest('button')!
+    const slide4Button = screen.getByText('Three Concepts to Test First').closest('button')!
     await user.click(slide4Button)
 
     // Verify phone chrome status bar and time
@@ -162,19 +260,8 @@ describe('prototype starter', () => {
     await user.click(billRow)
     expect(screen.getByLabelText(/High-speed Fiber Internet.*paid/i)).toBeInTheDocument()
 
-    // Switch to Split It
-    await user.click(screen.getByRole('button', { name: /Split It/i }))
-    expect(screen.getByText(/Each Person Pays/i)).toBeInTheDocument()
-    const shareBtn = screen.getByRole('button', { name: /Generate WavePay Money Request Link/i })
-    await user.click(shareBtn)
-    expect(screen.getByRole('button', { name: /WavePay Link Copied/i })).toBeInTheDocument()
-
-    // Switch to Money Health Check
-    await user.click(screen.getByRole('button', { name: /Money Health Check/i }))
-    expect(screen.getByText(/2-minute checkup/i)).toBeInTheDocument()
-    expect(screen.getByText(/Emergency Cash Cushion/i)).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: /1\+ Month Saved/i }))
-    expect(screen.getByText(/Cashflow Timing/i)).toBeInTheDocument()
+    // Verify Split It is removed from Slide 4
+    expect(screen.queryByRole('button', { name: /Split It/i })).not.toBeInTheDocument()
   })
 
   it('navigates through prototypes on slide 4 with ArrowDown and backward with ArrowUp', async () => {
@@ -188,46 +275,32 @@ describe('prototype starter', () => {
 
     // Press ArrowDown to enter Slide 4 -> Prototype 1 (Save for Something)
     await user.keyboard('{ArrowDown}')
-    expect(screen.getByText(/Slide 4 of 8 · Prototype 1\/5/i)).toBeInTheDocument()
+    expect(screen.getByText(/Slide 4 of 8 · Prototype 1\/3/i)).toBeInTheDocument()
     expect(screen.getAllByText(/Save for Something/i).length).toBeGreaterThan(0)
 
     // Press ArrowDown -> Prototype 2 (Can I Afford This?)
     await user.keyboard('{ArrowDown}')
-    expect(screen.getByText(/Slide 4 of 8 · Prototype 2\/5/i)).toBeInTheDocument()
+    expect(screen.getByText(/Slide 4 of 8 · Prototype 2\/3/i)).toBeInTheDocument()
     expect(screen.getByText(/Instant purchase runway check/i)).toBeInTheDocument()
 
     // Press ArrowDown -> Prototype 3 (Money Calendar)
     await user.keyboard('{ArrowDown}')
-    expect(screen.getByText(/Slide 4 of 8 · Prototype 3\/5/i)).toBeInTheDocument()
+    expect(screen.getByText(/Slide 4 of 8 · Prototype 3\/3/i)).toBeInTheDocument()
     expect(screen.getByText(/High-speed Fiber Internet/i)).toBeInTheDocument()
-
-    // Press ArrowDown -> Prototype 4 (Split It)
-    await user.keyboard('{ArrowDown}')
-    expect(screen.getByText(/Slide 4 of 8 · Prototype 4\/5/i)).toBeInTheDocument()
-    expect(screen.getByText(/Each Person Pays/i)).toBeInTheDocument()
-
-    // Press ArrowDown -> Prototype 5 (Money Health Check)
-    await user.keyboard('{ArrowDown}')
-    expect(screen.getByText(/Slide 4 of 8 · Prototype 5\/5/i)).toBeInTheDocument()
-    expect(screen.getByText(/2-minute checkup/i)).toBeInTheDocument()
 
     // Press ArrowDown -> Advances to Slide 5 (Points Connection)
     await user.keyboard('{ArrowDown}')
-    expect(screen.getAllByText('Slide 5 of 8').length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Slide 5 of 8/).length).toBeGreaterThan(0)
     expect(screen.getAllByText(/Give the Reward a Purpose/i).length).toBeGreaterThan(0)
 
-    // Press ArrowUp -> Returns to Slide 4, Prototype 5
+    // Press ArrowUp -> Returns to Slide 4, Prototype 3 (last prototype)
     await user.keyboard('{ArrowUp}')
-    expect(screen.getByText(/Slide 4 of 8 · Prototype 5\/5/i)).toBeInTheDocument()
-
-    // Press ArrowUp -> Returns to Prototype 4
-    await user.keyboard('{ArrowUp}')
-    expect(screen.getByText(/Slide 4 of 8 · Prototype 4\/5/i)).toBeInTheDocument()
+    expect(screen.getByText(/Slide 4 of 8 · Prototype 3\/3/i)).toBeInTheDocument()
 
     // Test clicking prototype tab on slide 4 directly (e.g. concept 2: Can I Afford This?)
-    const proto2TabBtn = screen.getByRole('button', { name: /Can I Afford This\?/i })
+    const proto2TabBtn = screen.getByRole('button', { name: /02\s*Can I Afford This\?/i })
     await user.click(proto2TabBtn)
-    expect(screen.getByText(/Slide 4 of 8 · Prototype 2\/5/i)).toBeInTheDocument()
+    expect(screen.getByText(/Slide 4 of 8 · Prototype 2\/3/i)).toBeInTheDocument()
     expect(screen.getByText(/Instant purchase runway check/i)).toBeInTheDocument()
   })
 })

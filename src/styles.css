@@ -120,6 +120,13 @@ p { color: var(--muted); line-height: 1.55; }
   background: var(--brand-mark-bg);
   font-weight: 800;
 }
+.brand__mark--image {
+  display: block;
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  object-fit: contain;
+}
 .brand strong, .brand span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .brand strong { font-size: .88rem; }
 .brand span { max-width: 48ch; margin-top: .12rem; color: var(--muted); font-size: .7rem; }
@@ -176,7 +183,7 @@ p { color: var(--muted); line-height: 1.55; }
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: .9rem clamp(1rem, 3vw, 2.3rem);
+  padding: .9rem clamp(1rem, 1.5vw, 1.4rem);
   border-bottom: 1px solid var(--border);
   background: var(--surface);
 }

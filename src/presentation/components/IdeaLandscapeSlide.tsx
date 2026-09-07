@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { AnimatedText } from './AnimatedText'
 import { LANDSCAPE_IDEAS } from '../presentationData'
 import type { IdeaCategory } from '../types'
 
@@ -15,10 +16,19 @@ export const IdeaLandscapeSlide: React.FC = () => {
         <div className="slide-header-flex">
           <div>
             <div className="eyebrow">Brainstorm Exploration</div>
-            <h2 className="slide-main-title">Opportunity Landscape (15 Ideas)</h2>
-            <p className="slide-sub-title">
-              Everyday money opportunities mapped across three customer spaces. 5 shortlisted for first testing.
-            </p>
+            <AnimatedText
+              as="h2"
+              effect="per-word-crossfade"
+              className="slide-main-title"
+              text="Opportunity Landscape (15 Ideas)"
+            />
+            <AnimatedText
+              as="p"
+              effect="micro-scale-fade"
+              className="slide-sub-title"
+              delayMs={250}
+              text="Everyday money opportunities mapped across three customer spaces. 3 shortlisted for first testing."
+            />
           </div>
           {/* Category Filter Pills */}
           <div className="filter-pill-group">
@@ -81,7 +91,7 @@ export const IdeaLandscapeSlide: React.FC = () => {
           <span className="badge-dep badge-dep--medium">Medium (Core integration)</span>
         </div>
         <div className="legend-note">
-          Highlighted rows indicate the <strong>5 priority concepts</strong> for initial review.
+          Highlighted rows indicate the <strong>3 priority concepts</strong> for initial review.
         </div>
       </div>
     </div>
